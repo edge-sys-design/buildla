@@ -66,3 +66,5 @@ buildbot.allowed_ips=[
 ]
 
 buildbot.repos_directory = "/home/ricky/buildbot/repos"
+
+buildbot.irc_bot=false

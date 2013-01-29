@@ -1,7 +1,7 @@
 package com.edgesysdesign.buildbot
 import org.jibble.pircbot._
 
-class IRCBot extends PircBot {
+class PIRCBot extends PircBot {
   setName("esd-buildbot")
   setLogin("esd-buildbot")
   val comchar = "!"
@@ -22,7 +22,6 @@ class IRCBot extends PircBot {
     login: String,
     hostname: String,
     message: String) {
-    
   }
 
 
@@ -34,5 +33,5 @@ class IRCBot extends PircBot {
     onMessage(target, sender, login, hostname, action)
 
   /** Reconnect when we get disconnected from the network. */
-  override def onDisconnect() = new IRCBot()
+  override def onDisconnect() = new PIRCBot()
 }
