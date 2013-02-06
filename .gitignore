@@ -6,3 +6,5 @@ tmp
 .history
 dist
 conf/application.conf
+.phutil_module_cache
+
