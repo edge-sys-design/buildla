@@ -28,12 +28,12 @@ class PIRCBot extends PircBot {
     login: String,
     hostname: String,
     message: String) {
-      val Array(command, args) = message.split(" ", 2)
-      command match {
-        case "!build" => {
+      val messageSplit = message.split(" ", 2)
+      messageSplit(0) match {
+        case "!build" if (messageSplit.size > 1) => {
           if (channel == "#qsolog") {
             future {
-              Build.execute(args, "HEAD")
+              Build.execute(messageSplit(1), "HEAD")
             }
           } else {
             buildbot.IRCBot.sendMessage("Permission denied.")
