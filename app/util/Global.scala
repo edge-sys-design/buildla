@@ -12,7 +12,7 @@ object IRCBot {
 
   def sendMessage(message: String) =
     if (isEnabled) {
-      Global.ircbot.sendMessage("#qsolog", message)
+      Global.ircbot.sendMessage("#qsolog", message) // TODO: Unhardcode.
     }
 }
 
@@ -24,7 +24,7 @@ object Global extends GlobalSettings {
     if (IRCBot.isEnabled) {
       ircbot.setVerbose(true)
       ircbot.connect("irc.freenode.net", 6667)
-      ircbot.joinChannel("#qsolog")
+      ircbot.joinChannel("#qsolog") // TODO: Unhardcode.
     }
   }
 

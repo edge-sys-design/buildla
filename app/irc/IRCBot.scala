@@ -1,10 +1,13 @@
 package com.edgesysdesign.buildbot
+
+import com.edgesysdesign.buildbot.util.Build
+import com.edgesysdesign.buildbot
+
 import org.jibble.pircbot._
 
 class PIRCBot extends PircBot {
   setName("esd-buildbot")
   setLogin("esd-buildbot")
-  val comchar = "!"
 
   /** Gets called every time a message gets sent to the channel.
     *
@@ -22,6 +25,18 @@ class PIRCBot extends PircBot {
     login: String,
     hostname: String,
     message: String) {
+      val Array(command, args) = message.split(" ", 2)
+      command match {
+        case "!build" => {
+          val users = getUsers("#qsolog") // TODO: Unhardcode.
+          if (users.exists(_.getNick == sender)) {
+            Build.execute(args, "HEAD")
+          } else {
+            buildbot.IRCBot.sendMessage("Permission denied.")
+          }
+        }
+        case _ =>
+      }
   }
 
 
