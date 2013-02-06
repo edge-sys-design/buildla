@@ -32,6 +32,8 @@ class PIRCBot extends PircBot {
     message: String) {
       val messageSplit = message.split(" ", 2)
       messageSplit(0) match {
+        case "!builds" => buildbot.IRCBot.sendMessage(
+          s"Current builds: ${builds.mkString(", ")}")
         case "!build" if (messageSplit.size > 1) => {
           val repo = messageSplit(1).trim
           if (channel != "#qsolog") {
