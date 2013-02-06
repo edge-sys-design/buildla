@@ -40,8 +40,8 @@ class PIRCBot extends PircBot {
             buildbot.IRCBot.sendMessage(
               s"A build of $repo is already in progress.")
           } else {
+            builds += repo
             future {
-              builds += repo
               Build.execute(repo, "HEAD")
             } onComplete { result =>
               builds -= repo
