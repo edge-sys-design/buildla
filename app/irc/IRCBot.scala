@@ -12,6 +12,8 @@ class PIRCBot extends PircBot {
   setName("esd-buildbot")
   setLogin("esd-buildbot")
 
+  val builds = new scala.collection.mutable.ListBuffer[String]
+
   /** Gets called every time a message gets sent to the channel.
     *
     * This is where we handle things like responding to commands.
@@ -31,12 +33,19 @@ class PIRCBot extends PircBot {
       val messageSplit = message.split(" ", 2)
       messageSplit(0) match {
         case "!build" if (messageSplit.size > 1) => {
-          if (channel == "#qsolog") {
-            future {
-              Build.execute(messageSplit(1), "HEAD")
-            }
-          } else {
+          val repo = messageSplit(1).trim
+          if (channel != "#qsolog") {
             buildbot.IRCBot.sendMessage("Permission denied.")
+          } else if (builds.contains(repo)) {
+            buildbot.IRCBot.sendMessage(
+              s"A build of $repo is already in progress.")
+          } else {
+            future {
+              builds += repo
+              Build.execute(repo, "HEAD")
+            } onComplete { result =>
+              builds -= repo
+            }
           }
         }
         case _ =>
