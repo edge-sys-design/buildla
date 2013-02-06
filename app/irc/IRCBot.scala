@@ -5,6 +5,9 @@ import com.edgesysdesign.buildbot
 
 import org.jibble.pircbot._
 
+import scala.concurrent.future
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class PIRCBot extends PircBot {
   setName("esd-buildbot")
   setLogin("esd-buildbot")
@@ -28,9 +31,10 @@ class PIRCBot extends PircBot {
       val Array(command, args) = message.split(" ", 2)
       command match {
         case "!build" => {
-          val users = getUsers("#qsolog") // TODO: Unhardcode.
-          if (users.exists(_.getNick == sender)) {
-            Build.execute(args, "HEAD")
+          if (channel == "#qsolog") {
+            future {
+              Build.execute(args, "HEAD")
+            }
           } else {
             buildbot.IRCBot.sendMessage("Permission denied.")
           }
