@@ -56,15 +56,6 @@ logger.play=INFO
 # Logger provided to your application:
 logger.application=DEBUG
 
-buildbot.allowed_ips=[
-  "207.97.227.253",
-  "50.57.128.197",
-  "50.57.231.61",
-  "108.171.174.178",
-  "98.27.143.13",
-  "127.0.0.1"
-]
-
 buildbot.repos_directory = "/home/ricky/buildbot/repos"
 
 buildbot.irc_bot=false

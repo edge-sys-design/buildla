@@ -7,38 +7,33 @@ import play.api.mvc._
 import play.api.libs.concurrent.Akka
 import play.api.Play.current
 import play.api.libs.json.Json
+import play.api.libs.ws.WS
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    val allowed = Play
-      .application
-      .configuration
-      .getStringList("buildbot.allowed_ips")
-      .get
+    val githubRequest = WS.url("https://api.github.com/meta").get()
 
-    val payload = request.body.asFormUrlEncoded.get("payload")(0)
+    Async {
+      githubRequest.map { response =>
+        val ips = "127.0.0.1" :: (response.json \ "hooks").as[List[String]]
+        if (ips.exists(_.replace("/32", "") == request.remoteAddress)) {
+          val payload = request.body.asFormUrlEncoded.get("payload")(0)
+          val json = Json.parse(payload)
+          val repo = (json \ "repository" \ "url").as[String].split("\\/", 4).last
+          val afterCommit = (json \ "after").as[String].take(8)
+          val build = Build.execute(repo, afterCommit)
 
-    if (allowed.contains(request.remoteAddress)) {
-      val json = Json.parse(payload)
-
-      val repo = (json \ "repository" \ "url")
-        .as[String]
-        .split("\\/", 4)
-        .last
-
-      val afterCommit = (json \ "after").as[String].take(8)
-
-      val build = Build.execute(repo, afterCommit)
-
-      build match {
-        case Left(error) => BadRequest(error)
-        case Right(result) => Ok("Done.")
+          build match {
+            case Left(error) => BadRequest(error)
+            case Right(result) => Ok("Done.")
+          }
+        } else {
+          Unauthorized("Access Denied")
+        }
       }
-    } else {
-      Unauthorized("denied")
     }
   }
 }
