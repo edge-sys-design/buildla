@@ -22,13 +22,18 @@ object Application extends Controller {
         if (ips.exists(_.replace("/32", "") == request.remoteAddress)) {
           val payload = request.body.asFormUrlEncoded.get("payload")(0)
           val json = Json.parse(payload)
+          val ref = (json \ "ref").as[String]
           val repo = (json \ "repository" \ "url").as[String].split("\\/", 4).last
           val afterCommit = (json \ "after").as[String].take(8)
-          val build = Build.execute(repo, afterCommit)
-
-          build match {
-            case Left(error) => BadRequest(error)
-            case Right(result) => Ok("Done.")
+          
+          if (ref == "refs/heads/master") {
+            val build = Build.execute(repo, afterCommit)
+            build match {
+              case Left(error) => BadRequest(error)
+              case Right(result) => Ok("Done.")
+            }
+          } else {
+            BadRequest("Skipping non-master branch push")
           }
         } else {
           Unauthorized("Access Denied")
