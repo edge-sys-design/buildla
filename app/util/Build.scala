@@ -26,6 +26,7 @@ object Build {
     val buildScript = s"${buildDir}/build.sh"
 
     if (!new File(buildScript).exists()) {
+      IRCBot.sendMessage(s"No buildscript was found for ${repo}.")
       Left(s"No buildscript found for ${repo}.")
     } else {
       IRCBot.sendMessage(
