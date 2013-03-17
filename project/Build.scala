@@ -13,11 +13,12 @@ object ApplicationBuild extends Build {
     anorm,
     "pircbot" % "pircbot" % "1.5.0",
     "org.joda" % "joda-convert" % "1.2",
-    "joda-time" % "joda-time" % "2.1"
+    "joda-time" % "joda-time" % "2.1",
+    "commons-net" % "commons-net" % "3.2"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
-    // Add your own project settings here      
+    scalacOptions += "-feature"
   )
 
 }

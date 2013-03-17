@@ -2,6 +2,8 @@ package controllers
 
 import com.edgesysdesign.buildbot.util.Build
 
+import org.apache.commons.net.util.SubnetUtils
+
 import play.api._
 import play.api.mvc._
 import play.api.libs.concurrent.Akka
@@ -18,8 +20,8 @@ object Application extends Controller {
 
     Async {
       githubRequest.map { response =>
-        val ips = "127.0.0.1" :: (response.json \ "hooks").as[List[String]]
-        if (ips.exists(_.replace("/32", "") == request.remoteAddress)) {
+        val ips = "127.0.0.1/32" :: (response.json \ "hooks").as[List[String]]
+        if (ips.exists(subnet => new SubnetUtils(subnet).getInfo.isInRange(request.remoteAddress))) {
           val payload = request.body.asFormUrlEncoded.get("payload")(0)
           val json = Json.parse(payload)
           val repo = (json \ "repository" \ "url").as[String].split("\\/", 4).last

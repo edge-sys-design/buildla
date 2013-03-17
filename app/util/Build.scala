@@ -33,7 +33,7 @@ object Build {
         s"${2.toChar}${commit}${2.toChar}.")
 
       val startTime = new DateTime
-      val exitCode = Seq("bash", buildScript) !
+      val exitCode = Seq("bash", buildScript).!
       val endTime = new DateTime
       val timeLength = PeriodFormat.getDefault.print(
         new Period(startTime, endTime))
